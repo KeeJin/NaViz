@@ -1,2 +1,2 @@
-- [Read Me](README)
+- [Introduction](introduction)
 - [Design Details](design-doc)
