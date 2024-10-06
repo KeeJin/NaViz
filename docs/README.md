@@ -1,6 +1,8 @@
 > This project is currently in the design phase.
 
-# Introduction to NaViz
+# NaViz Project Documentation
+
+## What is NaViz?
 NaViz is a web-based visualisation tool for robotics SLAM and navigation. It aims to provide the following:
 - UI that is simple to use
 - Ability to extend support for various robot adaptors (ROS, ROS2, etc)
