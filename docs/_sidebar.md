@@ -1,2 +1,3 @@
 - [Introduction](README)
 - [Design Details](design-doc)
+- [Project Setup](project-setup)

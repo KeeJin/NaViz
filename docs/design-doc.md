@@ -11,6 +11,10 @@ There will be an interface layer to bridge the robot internal network with this 
 TODO: draw.io diagram here
 
 ## Project Phases
+
+### Phase 0
+This phase will attempt to visualise a point cloud map at an origin
+
 ### Phase 1
 This phase will target the following basic functionality:
 - Barebones UI
