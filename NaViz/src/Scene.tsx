@@ -2,14 +2,15 @@ import { useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import CoordinateFrame from "./components/CoordinateFrame";
 import Controls from "./components/Controls";
-import { Vector3 } from "three";
+import { Object3D, Vector3 } from "three";
 import {
   GizmoHelper,
   GizmoViewport,
   PerspectiveCamera,
+  Points,
 } from "@react-three/drei";
 
-const Scene = () => {
+const Scene = ({ priorMap }: { priorMap: Object3D | undefined }) => {
   const [position, setPosition] = useState<Vector3>(new Vector3(0, 0, 0));
   return (
     <div className="bg-black h-full w-full">
@@ -31,6 +32,9 @@ const Scene = () => {
             setPosition(position);
           }}
         />
+
+        <Points>{priorMap ? <primitive object={priorMap} /> : null}</Points>
+
         <Controls target={position ? position : new Vector3(0, 0, 0)} />
         <GizmoHelper
           alignment="bottom-right" // widget alignment within scene

@@ -1,11 +1,16 @@
 import DragAndDrop from "./components/DragAndDrop";
+import usePCDParser from "./hooks/usePCDParser";
 import Scene from "./Scene";
 
 function App() {
+  const { points, parsePCD } = usePCDParser();
+  const handleFileUpload = (data: ArrayBuffer) => {
+    parsePCD(data);
+  }  
   return (
     <div className="items-center justify-center flex h-screen w-full">
       <div className="h-screen w-full">
-        <Scene />
+        <Scene priorMap={points} />
       </div>
       <div className="h-screen w-96 bg-gray-800 text-white">
         <h1 className="text-4xl font-bold p-4">NaViz</h1>
@@ -17,7 +22,7 @@ function App() {
           To begin, drag and drop a point cloud map (.pcd) file here:
         </p>
         <div className="p-4">
-          <input
+          {/* <input
             className="my-2"
             type="file"
             accept=".pcd"
@@ -27,9 +32,9 @@ function App() {
                 console.log("File uploaded: ", file);
               }
             }}
-          />
+          /> */}
           <DragAndDrop
-            onFileUpload={(data) => console.log("File uploaded: ", data)}
+            onFileUpload={handleFileUpload}
           />
         </div>
       </div>

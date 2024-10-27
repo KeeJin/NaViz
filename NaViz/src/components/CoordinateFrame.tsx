@@ -31,7 +31,7 @@ const CoordinateFrame = ({
     () =>
       [
         [0, 0, 0],
-        [1, 0, 0],
+        [5, 0, 0],
       ] as [number, number, number][],
     []
   );
@@ -39,7 +39,7 @@ const CoordinateFrame = ({
     () =>
       [
         [0, 0, 0],
-        [0, 1, 0],
+        [0, 5, 0],
       ] as [number, number, number][],
     []
   );
@@ -47,7 +47,7 @@ const CoordinateFrame = ({
     () =>
       [
         [0, 0, 0],
-        [0, 0, 1],
+        [0, 0, 5],
       ] as [number, number, number][],
     []
   );
@@ -91,7 +91,8 @@ const CoordinateFrame = ({
 
       {showGrid && (
         <Grid
-          args={[20, 20]} // Grid size and divisions
+          args={[100, 100]} // Grid size and divisions
+          sectionSize={10} // Size of each grid section
           position={[0, 0, 0]} // Slightly offset on the Y-axis to prevent z-fighting
           rotation={[0, 0, 0]} // Rotate the grid to be horizontal
           infiniteGrid={false} // Make the grid infinite
