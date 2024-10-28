@@ -26,12 +26,11 @@ const CoordinateFrame = ({
   const groupRef = useRef<Group>(null);
 
   // Define points for each axis
-  // Note: The conventional XYZ axes are now XZY. This is because the Y-axis is the vertical axis, and the Z-axis is the depth axis.
   const xPoints = useMemo(
     () =>
       [
         [0, 0, 0],
-        [5, 0, 0],
+        [1, 0, 0],
       ] as [number, number, number][],
     []
   );
@@ -39,7 +38,7 @@ const CoordinateFrame = ({
     () =>
       [
         [0, 0, 0],
-        [0, 5, 0],
+        [0, 1, 0],
       ] as [number, number, number][],
     []
   );
@@ -47,7 +46,7 @@ const CoordinateFrame = ({
     () =>
       [
         [0, 0, 0],
-        [0, 0, 5],
+        [0, 0, 1],
       ] as [number, number, number][],
     []
   );
@@ -85,16 +84,16 @@ const CoordinateFrame = ({
 
   return (
     <group ref={groupRef}>
-      <Axis color="red" points={xPoints} lineWidth={5} />
-      <Axis color="blue" points={yPoints} lineWidth={5} />
-      <Axis color="green" points={zPoints} lineWidth={5} />
+      <Axis color="red" points={xPoints} lineWidth={7} />
+      <Axis color="green" points={yPoints} lineWidth={7} />
+      <Axis color="blue" points={zPoints} lineWidth={7} />
 
       {showGrid && (
         <Grid
           args={[100, 100]} // Grid size and divisions
           sectionSize={10} // Size of each grid section
           position={[0, 0, 0]} // Slightly offset on the Y-axis to prevent z-fighting
-          rotation={[0, 0, 0]} // Rotate the grid to be horizontal
+          rotation={[Math.PI / 2, 0, 0]} // Rotate the grid to be horizontal
           infiniteGrid={false} // Make the grid infinite
           side={DoubleSide} // Render the grid on both sides
           //   fadeDistance={10} // Distance at which the grid fades
