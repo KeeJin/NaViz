@@ -6,7 +6,7 @@ function App() {
   const { points, parsePCD } = usePCDParser();
   const handleFileUpload = (data: ArrayBuffer) => {
     parsePCD(data);
-  }  
+  };
   return (
     <div className="items-center justify-center flex h-screen w-full">
       <div className="h-screen w-full">
@@ -33,9 +33,7 @@ function App() {
               }
             }}
           /> */}
-          <DragAndDrop
-            onFileUpload={handleFileUpload}
-          />
+          <DragAndDrop onFileUpload={handleFileUpload} />
         </div>
       </div>
     </div>

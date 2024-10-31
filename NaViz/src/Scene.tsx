@@ -36,9 +36,7 @@ const Scene = ({ priorMap }: { priorMap: Object3D | undefined }) => {
           }}
         />
 
-        <Points>
-          {priorMap ? <primitive object={priorMap} /> : null}
-        </Points>
+        <Points>{priorMap ? <primitive object={priorMap} /> : null}</Points>
 
         <Controls target={position ? position : new Vector3(0, 0, 0)} />
         <GizmoHelper

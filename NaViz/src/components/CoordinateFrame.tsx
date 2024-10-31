@@ -32,7 +32,7 @@ const CoordinateFrame = ({
         [0, 0, 0],
         [1, 0, 0],
       ] as [number, number, number][],
-    []
+    [],
   );
   const yPoints = useMemo(
     () =>
@@ -40,7 +40,7 @@ const CoordinateFrame = ({
         [0, 0, 0],
         [0, 1, 0],
       ] as [number, number, number][],
-    []
+    [],
   );
   const zPoints = useMemo(
     () =>
@@ -48,7 +48,7 @@ const CoordinateFrame = ({
         [0, 0, 0],
         [0, 0, 1],
       ] as [number, number, number][],
-    []
+    [],
   );
 
   // State to track the previous position and rotation

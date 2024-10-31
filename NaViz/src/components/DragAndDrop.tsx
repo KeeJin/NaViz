@@ -27,7 +27,7 @@ const DragAndDrop: React.FC<DragAndDropProps> = ({ onFileUpload }) => {
         alert("Please upload a valid PCD file");
       }
     },
-    [onFileUpload]
+    [onFileUpload],
   );
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {

@@ -11,9 +11,12 @@ const usePCDParser = () => {
     const loader = new PCDLoader();
     const data = loader.parse(fileContent);
     console.log("Number of points: ", data.geometry.attributes.position.count);
-    data.material = new PointsMaterial({ size: 0.05, color: Color.NAMES.violet });
+    data.material = new PointsMaterial({
+      size: 0.05,
+      color: Color.NAMES.violet,
+    });
     // Todo: Figure out how to create a shader material to color points based on z-coordinate
-    
+
     setPoints(data);
   }, []);
 
