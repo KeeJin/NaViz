@@ -3,7 +3,7 @@
 import React, { useCallback, useState } from "react";
 
 interface DragAndDropProps {
-  onFileUpload: (data: string) => void; // Callback to handle uploaded data
+  onFileUpload: (data: ArrayBuffer) => void;
 }
 
 const DragAndDrop: React.FC<DragAndDropProps> = ({ onFileUpload }) => {
@@ -16,18 +16,18 @@ const DragAndDrop: React.FC<DragAndDropProps> = ({ onFileUpload }) => {
       setIsDragging(false);
       const file = event.dataTransfer.files[0];
 
-      if (file && file.type === "application/octet-stream") {
+      if (file && file.name.endsWith(".pcd")) {
         const reader = new FileReader();
         reader.onload = () => {
-          const fileContent = reader.result as string;
+          const fileContent = reader.result as ArrayBuffer;
           onFileUpload(fileContent);
         };
-        reader.readAsText(file);
+        reader.readAsArrayBuffer(file);
       } else {
         alert("Please upload a valid PCD file");
       }
     },
-    [onFileUpload]
+    [onFileUpload],
   );
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {

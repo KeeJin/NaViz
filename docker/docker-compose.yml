@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  naviz-ros2-interface-server:
+    image: keeejinnn/naviz-ros2-interface-server:v0.1.0
+    ports:
+      - "9090:9090" # Adjust the ports as needed
+    environment:
+      - ROS_DOMAIN_ID=0
+    volumes:
+      - ./launch/rosbridge_websocket_launch.xml:/ros2_ws/src/rosbridge_suite/rosbridge_server/launch/rosbridge_websocket_launch.xml
+    networks:
+      - naviz-network
+    command: ["-c", "source /opt/ros/humble/setup.bash && ros2 launch rosbridge_server rosbridge_websocket_launch.xml"]
+  ros-bag-service:
+    image: ros:humble-ros-base
+    depends_on:
+      - naviz-ros2-interface-server
+    environment:
+      - ROS_DOMAIN_ID=0
+    command: ros2 bag play /data/test_bag/ --loop
+    volumes:
+      - ./data:/data
+    networks:
+      - naviz-network
+
+networks:
+  naviz-network:
+    driver: bridge
