@@ -18,7 +18,7 @@ services:
       - naviz-ros2-interface-server
     environment:
       - ROS_DOMAIN_ID=0
-    command: ros2 bag play /data/test_bag/ --loop
+    command: ros2 bag play /data/sample/ --loop
     volumes:
       - ./data:/data
     networks:
