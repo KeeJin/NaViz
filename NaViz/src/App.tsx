@@ -23,7 +23,7 @@ function App() {
     subscribeToTopic(topicName, messageType, (message) => {
       // console.log(`Message from ${topicName}:`, message);
       // console.log("Message Type:", messageType);
-      if (topicName === "/tf" && messageType === "tf2_msgs/msg/TFMessage") {
+      if (messageType === "tf2_msgs/msg/TFMessage") {
         // Handle TF messages
         handleTfMessage(message);
       } else if (messageType === "sensor_msgs/msg/PointCloud2") {
@@ -32,6 +32,7 @@ function App() {
       }
     });
     setSubscribedTopics((prev) => new Map(prev).set(topicName, messageType));
+    console.log("Updated subscribedTopics:", subscribedTopics);
   };
 
   const handleUnsubscribe = (topicName: string) => {

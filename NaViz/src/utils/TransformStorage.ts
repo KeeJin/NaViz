@@ -18,7 +18,7 @@ const saveTransform = (
   rotation: [number, number, number, number],
 ) => {
   const key = `${parentFrame}:${childFrame}`;
-  console.log("Saving transform:", key);
+  // console.log("Saving transform:", key);
   const transformMatrix = new Matrix4();
 
   // Create a transformation matrix from translation and quaternion rotation

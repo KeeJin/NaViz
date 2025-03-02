@@ -28,6 +28,7 @@ const Scene = ({
   const [showTf, setShowTf] = useState<boolean>(false);
   const [showPointCloud, setShowPointCloud] = useState<boolean>(false);
   const [baseLink, setBaseLink] = useState<Pose | null>(null);
+  const [pointClouds, setPointClouds] = useState<string[]>([]);
 
   useEffect(() => {
     console.log("Subscribed Topics:", subscribedTopics);
@@ -38,26 +39,40 @@ const Scene = ({
     }
 
     let hasPointCloudMessage = false;
-    subscribedTopics.forEach((topicName, messageType) => {
+    let pointCloudTopics: string[] = [];
+    subscribedTopics.forEach((messageType, topicName) => {
+      console.log("Topic Name:", topicName);
       if (messageType == "sensor_msgs/msg/PointCloud2") {
         hasPointCloudMessage = true;
+        pointCloudTopics.push(topicName);
       }
     });
+    console.log("Point Cloud Topics:", pointCloudTopics);
+    console.log("Has Point Cloud Message?:", hasPointCloudMessage);
+    setPointClouds(pointCloudTopics);
     setShowPointCloud(hasPointCloudMessage);
   }, [subscribedTopics]);
 
   useEffect(() => {
     const getBaseLinkPose = () => {
-      const baseLinkTransform = getTransform("odom", "base_link");
-      if (baseLinkTransform) {
+      const baseFPTransform = getTransform("odom", "base_footprint");
+      const baseLinkTransform = getTransform("base_footprint", "base_link");
+      let baseLinkPose = new Matrix4();
+      if (baseFPTransform && baseLinkTransform) {
+        baseLinkPose = baseFPTransform.multiply(baseLinkTransform);
+      } else {
+        console.error("Base Footprint or Base Link not found.");
+        return;
+      }
+      if (baseLinkPose) {
         const position = new Vector3();
         const quaternion = new Quaternion();
-        baseLinkTransform.decompose(position, quaternion, new Vector3());
+        baseLinkPose.decompose(position, quaternion, new Vector3());
         const rotation = new Euler().setFromQuaternion(quaternion);
-        console.log("Base Link Pose:", position, rotation);
+        // console.log("Base Link Pose:", position, rotation);
         setBaseLink({ position, rotation });
       } else {
-        console.log("Base Link not found.");
+        // console.log("Base Link not found.");
       }
     };
     const interval = setInterval(() => {
@@ -69,36 +84,36 @@ const Scene = ({
     };
   }, []);
 
-  const showTfs = () => {
-    console.log("Show TF:", showTf);
-    if (!showTf) {
-      return null;
-    }
+  // const showTfs = () => {
+  //   console.log("Show TF:", showTf);
+  //   if (!showTf) {
+  //     return null;
+  //   }
 
-    getTransformNames().forEach((frame) => {
-      let map_to_base_trans = new Vector3();
-      let map_to_base_rot = new Euler();
-      console.log("Frame:", frame);
-      // const map_to_base_link
-      if (frame === "base_link") {
-        const map_to_base_link = getTransform("map", frame);
-        const rotation = new Quaternion();
-        map_to_base_link?.decompose(map_to_base_trans, rotation, new Vector3());
-        map_to_base_rot = new Euler().setFromQuaternion(rotation);
-        console.log("translation:", map_to_base_trans);
-        console.log("rotation:", map_to_base_rot);
-      }
-      return (
-        <group>
-          <CoordinateFrame
-            showGrid={false}
-            translation={baseLink?.position || new Vector3(0, 0, 0)}
-            rotation={baseLink?.rotation || new Euler(0, 0, 0)}
-          />
-        </group>
-      );
-    });
-  };
+  //   getTransformNames().forEach((frame) => {
+  //     let map_to_base_trans = new Vector3();
+  //     let map_to_base_rot = new Euler();
+  //     console.log("Frame:", frame);
+  //     // const map_to_base_link
+  //     if (frame === "base_link") {
+  //       const map_to_base_link = getTransform("map", frame);
+  //       const rotation = new Quaternion();
+  //       map_to_base_link?.decompose(map_to_base_trans, rotation, new Vector3());
+  //       map_to_base_rot = new Euler().setFromQuaternion(rotation);
+  //       console.log("translation:", map_to_base_trans);
+  //       console.log("rotation:", map_to_base_rot);
+  //     }
+  //     return (
+  //       <group>
+  //         <CoordinateFrame
+  //           showGrid={false}
+  //           translation={baseLink?.position || new Vector3(0, 0, 0)}
+  //           rotation={baseLink?.rotation || new Euler(0, 0, 0)}
+  //         />
+  //       </group>
+  //     );
+  //   });
+  // };
 
   return (
     <div className="bg-black h-full w-full">
@@ -125,13 +140,19 @@ const Scene = ({
         />
 
         {/* {showTfs()} */}
-        <CoordinateFrame
+        {showTf ? <CoordinateFrame
             showGrid={false}
             translation={baseLink?.position || new Vector3(0, 0, 0)}
             rotation={baseLink?.rotation || new Euler(0, 0, 0)}
-          />
+          /> : null}
 
         <Points>{priorMap ? <primitive object={priorMap} /> : null}</Points>
+
+        {showPointCloud
+          ? <Points>
+                  <primitive object={getPointCloud("/velodyne_points")} />
+            </Points>
+          : null}
 
         <Controls target={position ? position : new Vector3(0, 0, 0)} />
         <GizmoHelper
