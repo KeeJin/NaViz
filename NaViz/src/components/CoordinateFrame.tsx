@@ -17,13 +17,18 @@ const Axis = ({
 
 interface CoordinateFrameProps {
   showGrid?: boolean;
+  translation: Vector3;
+  rotation: Euler;
   onPoseChange?: (position: Vector3, rotation: Euler) => void;
 }
 const CoordinateFrame = ({
   showGrid = false,
+  translation = new Vector3(0, 0, 0),
+  rotation = new Euler(0, 0, 0),
   onPoseChange = undefined,
 }: CoordinateFrameProps) => {
   const groupRef = useRef<Group>(null);
+  const prevPose = useRef<{ position: Vector3; rotation: Euler } | null>(null);
 
   // Define points for each axis
   const xPoints = useMemo(
@@ -51,33 +56,25 @@ const CoordinateFrame = ({
     [],
   );
 
-  // State to track the previous position and rotation
-  const prevPose = useRef<{ position: Vector3; rotation: Euler } | null>(null);
-
   // Use frame to track changes every frame
   useFrame(() => {
-    if (groupRef.current && onPoseChange !== undefined) {
-      const { position, rotation } = groupRef.current;
+    if (groupRef.current) {
+      // Update translation and rotation
+      groupRef.current.position.copy(translation);
+      groupRef.current.rotation.copy(rotation);
 
-      // Check if position or rotation has changed
-      const hasChanged =
+      // Check if pose has changed before triggering callback
+      if (
         !prevPose.current ||
-        !prevPose.current.position.equals(position) ||
-        !prevPose.current.rotation.equals(rotation);
-
-      if (hasChanged) {
-        // console.log("Pose changed");
-        // Update the previous pose reference
+        !prevPose.current.position.equals(translation) ||
+        !prevPose.current.rotation.equals(rotation)
+      ) {
         prevPose.current = {
-          position: position.clone(),
+          position: translation.clone(),
           rotation: rotation.clone(),
         };
 
-        // console.log("Position: ", position);
-        // console.log("Rotation: ", rotation);
-
-        // Call the onPoseChange callback with the current position and rotation
-        onPoseChange(position.clone(), rotation.clone());
+        onPoseChange?.(translation.clone(), rotation.clone());
       }
     }
   });

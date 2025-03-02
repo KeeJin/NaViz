@@ -4,14 +4,15 @@ import DragAndDrop from "./components/DragAndDrop";
 import TopicTile from "./components/TopicTile";
 import usePCDParser from "./hooks/usePCDParser";
 import useRosBridgeClient from "./hooks/useRoslib";
+import { handleTfMessage, handlePointCloud2Message } from "./utils/RosLibMessageProcessor";
 import Scene from "./Scene";
 
 function App() {
   const { points, parsePCD } = usePCDParser();
   const { topics, services, actions, subscribeToTopic, unsubscribeFromTopic } =
     useRosBridgeClient({ url: "ws://localhost:9090", interval: 1000 });
-  const [subscribedTopics, setSubscribedTopics] = useState<Set<string>>(
-    new Set(),
+  const [subscribedTopics, setSubscribedTopics] = useState<Map<string, string>>(
+    new Map(),
   );
   const handleFileUpload = (data: ArrayBuffer) => {
     parsePCD(data);
@@ -20,17 +21,26 @@ function App() {
 
   const handleSubscribe = (topicName: string, messageType: string) => {
     subscribeToTopic(topicName, messageType, (message) => {
-      console.log(`Message from ${topicName}:`, message);
+      // console.log(`Message from ${topicName}:`, message);
+      // console.log("Message Type:", messageType);
+      if (messageType === "tf2_msgs/msg/TFMessage") {
+        // Handle TF messages
+        handleTfMessage(message);
+      } else if (messageType === "sensor_msgs/msg/PointCloud2") {
+        // Handle PointCloud2 messages
+        handlePointCloud2Message(topicName, message);
+      }
     });
-    setSubscribedTopics((prev) => new Set(prev).add(topicName));
+    setSubscribedTopics((prev) => new Map(prev).set(topicName, messageType));
+    console.log("Updated subscribedTopics:", subscribedTopics);
   };
 
   const handleUnsubscribe = (topicName: string) => {
     unsubscribeFromTopic(topicName);
     setSubscribedTopics((prev) => {
-      const newSet = new Set(prev);
-      newSet.delete(topicName);
-      return newSet;
+      const newMap = new Map(prev);
+      newMap.delete(topicName);
+      return newMap;
     });
   };
 
@@ -41,7 +51,7 @@ function App() {
   return (
     <div className="items-center justify-center flex h-screen w-full">
       <div className="h-screen w-full">
-        <Scene priorMap={points} />
+        <Scene priorMap={points} subscribedTopics={subscribedTopics} />
       </div>
       <div className="h-screen w-96 bg-gray-800 text-white">
         <h1 className="text-4xl font-bold p-4">NaViz</h1>
